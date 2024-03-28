@@ -1,0 +1,62 @@
+from collections import deque
+
+class State:
+    def __init__(self, missionaries, cannibals, boat):
+        self.missionaries = missionaries
+        self.cannibals = cannibals
+        self.boat = boat
+
+    def __eq__(self, other):
+        return self.missionaries == other.missionaries and self.cannibals == other.cannibals and self.boat == other.boat
+
+    def __hash__(self):
+        return hash((self.missionaries, self.cannibals, self.boat))
+
+    def is_valid(self):
+        if self.missionaries < 0 or self.cannibals < 0 or self.missionaries > 3 or self.cannibals > 3:
+            return False
+        if self.missionaries < self.cannibals and self.missionaries > 0:
+            return False
+        if 3 - self.missionaries < 3 - self.cannibals and 3 - self.missionaries > 0:
+            return False
+        return True
+
+    def successors(self):
+        moves = [(1, 0), (2, 0), (0, 1), (0, 2), (1, 1)]
+        if self.boat == 1:
+            moves = [(-m, -c) for m, c in moves]
+        for m, c in moves:
+            new_state = State(self.missionaries + m, self.cannibals + c, 1 - self.boat)
+            if new_state.is_valid():
+                yield new_state
+
+def bfs():
+    initial_state = State(3, 3, 1)
+    goal_state = State(0, 0, 0)
+    visited = set()
+    queue = deque([(initial_state, [])])
+
+    while queue:
+        current_state, path = queue.popleft()
+        if current_state == goal_state:
+            return path + [current_state]
+        if current_state not in visited:
+            visited.add(current_state)
+            for successor in current_state.successors():
+                queue.append((successor, path + [current_state]))
+    return None
+
+def print_solution(solution):
+    for i, state in enumerate(solution):
+        print(f"Step {i}: Missionaries={state.missionaries}, Cannibals={state.cannibals}, Boat={'Left' if state.boat == 1 else 'Right'}")
+
+def main():
+    solution = bfs()
+    if solution:
+        print("Solution found:")
+        print_solution(solution)
+    else:
+        print("No solution found")
+
+if __name__ == "__main__":
+    main()
