@@ -1,0 +1,29 @@
+import itertools
+
+def solve_cryptarithmetic(puzzle):
+    letters = set(ch for word in puzzle.split() for ch in word if ch.isalpha())
+    if len(letters) > 10:
+        return None  # More than 10 distinct letters are not possible
+    letters = sorted(letters)
+    for perm in itertools.permutations(range(10), len(letters)):
+        mapping = {ch: digit for ch, digit in zip(letters, perm)}
+        if evaluate_puzzle(puzzle, mapping):
+            return mapping
+    return None  # No solution found
+
+def evaluate_puzzle(puzzle, mapping):
+    equation = ''.join(mapping.get(ch, ch) for ch in puzzle)
+    try:
+        return eval(equation)
+    except ZeroDivisionError:
+        return False
+
+if __name__ == "__main__":
+    puzzle = "SEND + MORE == MONEY"
+    solution = solve_cryptarithmetic(puzzle)
+    if solution:
+        print("Solution found:")
+        for ch, digit in solution.items():
+            print(f"{ch}: {digit}")
+    else:
+        print("No solution found.")
