@@ -1,0 +1,61 @@
+class VacuumCleaner:
+    def __init__(self, environment):
+        self.environment = environment
+        self.location = (0, 0)  # Initial location of the vacuum cleaner
+
+    def move_left(self):
+        if self.location[1] > 0:
+            self.location = (self.location[0], self.location[1] - 1)
+            print("Moved left")
+
+    def move_right(self):
+        if self.location[1] < len(self.environment[0]) - 1:
+            self.location = (self.location[0], self.location[1] + 1)
+            print("Moved right")
+
+    def move_up(self):
+        if self.location[0] > 0:
+            self.location = (self.location[0] - 1, self.location[1])
+            print("Moved up")
+
+    def move_down(self):
+        if self.location[0] < len(self.environment) - 1:
+            self.location = (self.location[0] + 1, self.location[1])
+            print("Moved down")
+
+    def clean(self):
+        x, y = self.location
+        if self.environment[x][y] == 1:  # If the cell is dirty
+            self.environment[x][y] = 0  # Clean the cell
+            print("Cleaned at location:", self.location)
+        else:
+            print("No dirt to clean at location:", self.location)
+
+    def print_environment(self):
+        for row in self.environment:
+            print(row)
+
+
+# Example environment
+environment = [
+    [1, 0, 1],
+    [0, 1, 0],
+    [1, 1, 0]
+]
+
+# Create a vacuum cleaner instance
+vacuum_cleaner = VacuumCleaner(environment)
+
+# Clean and move example
+print("Initial Environment:")
+vacuum_cleaner.print_environment()
+print()
+
+vacuum_cleaner.clean()
+vacuum_cleaner.move_right()
+vacuum_cleaner.clean()
+vacuum_cleaner.move_down()
+vacuum_cleaner.clean()
+
+print("\nFinal Environment:")
+vacuum_cleaner.print_environment()
